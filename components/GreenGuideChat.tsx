@@ -2,12 +2,27 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2, Sparkles } from 'lucide-react';
 import { chatWithGreenGuide } from '../services/geminiService';
 import { ChatMessage } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const GreenGuideChat: React.FC = () => {
+  const { language, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Reset initial message when language changes
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: 'Hi! I\'m GreenGuide. Ask me anything about our planting missions or how to donate!' }
+    { role: 'model', text: t.chat.initial }
   ]);
+  
+  // Update the first message if it hasn't been modified yet when language toggles
+  useEffect(() => {
+    setMessages(prev => {
+        if (prev.length === 1 && prev[0].role === 'model') {
+            return [{ role: 'model', text: t.chat.initial }];
+        }
+        return prev;
+    })
+  }, [language, t.chat.initial]);
+
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -28,7 +43,7 @@ const GreenGuideChat: React.FC = () => {
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
     setIsLoading(true);
 
-    const response = await chatWithGreenGuide(userMsg);
+    const response = await chatWithGreenGuide(userMsg, language);
 
     setMessages(prev => [...prev, { role: 'model', text: response }]);
     setIsLoading(false);
@@ -75,7 +90,7 @@ const GreenGuideChat: React.FC = () => {
               <div className="flex justify-start w-full">
                 <div className="bg-white px-4 py-3 rounded-2xl rounded-bl-none shadow-sm border border-slate-100 flex items-center gap-2">
                   <Loader2 size={16} className="animate-spin text-emerald-500" />
-                  <span className="text-xs text-slate-400">Thinking...</span>
+                  <span className="text-xs text-slate-400">{t.chat.thinking}</span>
                 </div>
               </div>
             )}
@@ -89,7 +104,7 @@ const GreenGuideChat: React.FC = () => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Type your question..."
+              placeholder={t.chat.placeholder}
               className="flex-1 text-sm bg-slate-50 border-none rounded-full px-4 py-2 focus:ring-2 focus:ring-emerald-500 outline-none"
             />
             <button

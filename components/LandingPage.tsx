@@ -2,8 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MOCK_STATS, DONATION_PACKAGES } from '../constants';
 import { MapPin, ArrowRight, ShieldCheck, Heart, Users, Globe } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const LandingPage: React.FC = () => {
+  const { t } = useLanguage();
+
+  const steps = [
+    { icon: Users, title: t.landing.steps.choose.title, desc: t.landing.steps.choose.desc },
+    { icon: Heart, title: t.landing.steps.donate.title, desc: t.landing.steps.donate.desc },
+    { icon: MapPin, title: t.landing.steps.track.title, desc: t.landing.steps.track.desc }
+  ];
+
   return (
     <div className="space-y-20 pb-16">
       {/* Hero Section */}
@@ -11,35 +20,34 @@ const LandingPage: React.FC = () => {
         <div className="flex flex-col justify-center space-y-8 animate-in slide-in-from-left-5 duration-700">
           <div className="inline-flex max-w-max items-center rounded-full bg-emerald-100 border border-emerald-200 px-3 py-1.5 text-xs font-semibold text-emerald-800">
             <Globe size={12} className="mr-1.5" />
-            Make the world greener today
+            {t.landing.badge}
           </div>
           <h1 className="text-5xl font-extrabold tracking-tight md:text-6xl text-slate-900 leading-[1.1]">
-            Plant a Tree. <br />
+            {t.landing.heroTitle} <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
-              Grow a Future.
+              {t.landing.heroTitleSpan}
             </span>
           </h1>
           <p className="max-w-xl text-lg text-slate-600 leading-relaxed">
-            Your donation funds real trees, planted by local communities in
-            Bangladesh. Get a digital certificate, GPS tracking, and see your impact grow.
+            {t.landing.heroDesc}
           </p>
           <div className="flex flex-wrap gap-4">
             <Link
               to="/donate"
               className="rounded-full bg-emerald-600 px-8 py-4 text-base font-bold text-white shadow-lg hover:bg-emerald-700 hover:shadow-emerald-200/50 transition-all"
             >
-              Plant a Tree Now
+              {t.landing.ctaPlant}
             </Link>
             <Link
               to="/donate?mode=subscription"
               className="rounded-full border-2 border-emerald-100 bg-white px-8 py-4 text-base font-bold text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50 transition-all"
             >
-              Monthly Impact
+              {t.landing.ctaMonthly}
             </Link>
           </div>
           <p className="text-xs text-slate-500 flex items-center gap-2">
             <ShieldCheck size={14} className="text-emerald-500" />
-            Verified photos & GPS coordinates for every campaign.
+            {t.landing.verified}
           </p>
         </div>
 
@@ -59,8 +67,8 @@ const LandingPage: React.FC = () => {
                     <Heart size={24} fill="currentColor" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Certificate Issued</p>
-                    <p className="text-slate-900 font-semibold mt-1">In honor of Someone Special</p>
+                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider">{t.landing.certIssued}</p>
+                    <p className="text-slate-900 font-semibold mt-1">{t.landing.certHonor}</p>
                     <p className="text-xs text-slate-500 mt-1">Gazipur Community Forest • <span className="font-mono">23.8°N, 90.4°E</span></p>
                   </div>
                 </div>
@@ -73,16 +81,26 @@ const LandingPage: React.FC = () => {
       <section id="impact" className="py-10">
         <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
           <div className="grid gap-8 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-100">
-            {MOCK_STATS.map((stat, idx) => (
-              <div key={idx} className="pt-4 md:pt-0 md:pl-6 first:pl-0 text-center md:text-left">
-                <p className="text-sm font-medium text-slate-500 mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-emerald-700">{stat.value}</p>
-                {stat.subtext && <p className="text-xs text-slate-400 mt-1">{stat.subtext}</p>}
-              </div>
-            ))}
+            {/* Stat 1 */}
+            <div className="pt-4 md:pt-0 md:pl-6 first:pl-0 text-center md:text-left">
+                <p className="text-sm font-medium text-slate-500 mb-1">{t.landing.stats.trees}</p>
+                <p className="text-3xl font-bold text-emerald-700">{MOCK_STATS[0].value}</p>
+            </div>
+             {/* Stat 2 */}
+            <div className="pt-4 md:pt-0 md:pl-6 first:pl-0 text-center md:text-left">
+                <p className="text-sm font-medium text-slate-500 mb-1">{t.landing.stats.donors}</p>
+                <p className="text-3xl font-bold text-emerald-700">{MOCK_STATS[1].value}</p>
+            </div>
+             {/* Stat 3 */}
+            <div className="pt-4 md:pt-0 md:pl-6 first:pl-0 text-center md:text-left">
+                <p className="text-sm font-medium text-slate-500 mb-1">{t.landing.stats.co2}</p>
+                <p className="text-3xl font-bold text-emerald-700">{MOCK_STATS[2].value}</p>
+                <p className="text-xs text-slate-400 mt-1">{t.landing.stats.subtext}</p>
+            </div>
+            
             <div className="pt-4 md:pt-0 md:pl-6 flex flex-col justify-center">
               <Link to="/track" className="group flex items-center justify-center md:justify-start gap-2 text-sm font-bold text-emerald-600 hover:text-emerald-700">
-                <span>View Live Map</span>
+                <span>{t.landing.stats.viewMap}</span>
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -93,16 +111,12 @@ const LandingPage: React.FC = () => {
       {/* How It Works */}
       <section id="how-it-works" className="space-y-10">
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold text-slate-900">Simple steps to big impact</h2>
-          <p className="mt-3 text-slate-600">Transparency is at our core. Track your specific trees from sapling to maturity.</p>
+          <h2 className="text-3xl font-bold text-slate-900">{t.landing.howTitle}</h2>
+          <p className="mt-3 text-slate-600">{t.landing.howDesc}</p>
         </div>
         
         <div className="grid gap-8 md:grid-cols-3">
-          {[
-            { icon: Users, title: "Choose Trees", desc: "Select a package or custom amount for any occasion." },
-            { icon: Heart, title: "Donate Securely", desc: "100% of funds go to verified planting partners." },
-            { icon: MapPin, title: "Track Growth", desc: "Get GPS coords and photo updates of your forest." }
-          ].map((step, i) => (
+          {steps.map((step, i) => (
             <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-200 transition-colors group">
               <div className="h-14 w-14 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                 <step.icon size={28} />
@@ -116,9 +130,13 @@ const LandingPage: React.FC = () => {
 
       {/* Occasions */}
       <section id="occasion" className="space-y-8">
-        <h2 className="text-2xl font-bold text-slate-900">Plant for every occasion</h2>
+        <h2 className="text-2xl font-bold text-slate-900">{t.landing.occasionsTitle}</h2>
         <div className="grid gap-4 md:grid-cols-4">
-          {DONATION_PACKAGES.map((pkg) => (
+          {DONATION_PACKAGES.map((pkg) => {
+             // Resolve translated label and description based on slug
+             const pkgTrans = t.landing.packages[pkg.slug as keyof typeof t.landing.packages] || { label: pkg.label, desc: pkg.description };
+             
+             return (
             <Link
               key={pkg.slug}
               to={`/donate?occasion=${pkg.slug}&trees=${pkg.trees}`}
@@ -128,18 +146,17 @@ const LandingPage: React.FC = () => {
                 <div className="h-10 w-10 rounded-full bg-emerald-50 mb-4 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
                     <Leaf size={20} />
                 </div>
-                <p className="font-bold text-lg text-slate-900">{pkg.label}</p>
-                <p className="text-sm text-slate-500 mt-1">{pkg.description}</p>
+                <p className="font-bold text-lg text-slate-900">{pkgTrans.label}</p>
+                <p className="text-sm text-slate-500 mt-1">{pkgTrans.desc}</p>
               </div>
               <div className="mt-6 pt-4 border-t border-slate-50">
-                 <p className="text-emerald-700 font-semibold text-sm">Start with {pkg.trees} trees →</p>
+                 <p className="text-emerald-700 font-semibold text-sm">{t.landing.startWith} {pkg.trees} trees →</p>
               </div>
             </Link>
-          ))}
+          );
+          })}
         </div>
       </section>
-      
-      {/* Function definitions to fix React syntax issues in loops */}
     </div>
   );
 };

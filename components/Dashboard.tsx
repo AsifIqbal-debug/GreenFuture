@@ -2,8 +2,10 @@ import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { MOCK_USER_TREES } from '../constants';
 import { MapPin, Calendar, Sprout, Download, Share2 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Dashboard: React.FC = () => {
+  const { t } = useLanguage();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const showSuccess = searchParams.get('new_donation') === 'true';
@@ -17,17 +19,16 @@ const Dashboard: React.FC = () => {
           <div className="h-16 w-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-600 mb-2">
             <Sprout size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-emerald-800">Thank you for planting hope!</h2>
+          <h2 className="text-2xl font-bold text-emerald-800">{t.dashboard.successTitle}</h2>
           <p className="text-emerald-700 max-w-lg mx-auto">
-            Your trees have been successfully funded. We have assigned a local planting team. 
-            You will see your new trees appear here within 48 hours once they are tagged.
+            {t.dashboard.successDesc}
           </p>
           <div className="flex justify-center gap-3 pt-2">
             <button className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-700">
-                <Download size={16} /> Download Certificate
+                <Download size={16} /> {t.dashboard.downloadCert}
             </button>
             <button className="flex items-center gap-2 bg-white text-emerald-700 border border-emerald-200 px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-50">
-                <Share2 size={16} /> Share Impact
+                <Share2 size={16} /> {t.dashboard.shareImpact}
             </button>
           </div>
         </div>
@@ -37,21 +38,21 @@ const Dashboard: React.FC = () => {
         {/* Sidebar / Stats */}
         <div className="space-y-6">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-                <h3 className="text-sm font-bold text-slate-500 uppercase mb-4">Your Impact</h3>
+                <h3 className="text-sm font-bold text-slate-500 uppercase mb-4">{t.dashboard.yourImpact}</h3>
                 <div className="space-y-4">
                     <div>
                         <p className="text-3xl font-bold text-slate-900">12</p>
-                        <p className="text-sm text-slate-600">Trees Planted</p>
+                        <p className="text-sm text-slate-600">{t.dashboard.planted}</p>
                     </div>
                     <div>
                         <p className="text-3xl font-bold text-slate-900">0.3t</p>
-                        <p className="text-sm text-slate-600">CO₂ Offset (Proj.)</p>
+                        <p className="text-sm text-slate-600">{t.dashboard.co2}</p>
                     </div>
                 </div>
             </div>
 
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-                <h3 className="text-sm font-bold text-slate-500 uppercase mb-4">Badges</h3>
+                <h3 className="text-sm font-bold text-slate-500 uppercase mb-4">{t.dashboard.badges}</h3>
                 <div className="flex gap-2 flex-wrap">
                     <span className="px-3 py-1 bg-yellow-50 text-yellow-700 text-xs font-bold rounded-full border border-yellow-200">Early Adopter</span>
                     <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">Green Hero</span>
@@ -62,11 +63,11 @@ const Dashboard: React.FC = () => {
         {/* Main Content / List */}
         <div className="lg:col-span-2 space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-slate-900">My Forest</h2>
+                <h2 className="text-xl font-bold text-slate-900">{t.dashboard.myForest}</h2>
                 <div className="flex gap-2">
-                    <button className="text-sm font-medium text-slate-500 hover:text-emerald-600">List View</button>
+                    <button className="text-sm font-medium text-slate-500 hover:text-emerald-600">{t.dashboard.listView}</button>
                     <span className="text-slate-300">|</span>
-                    <button className="text-sm font-medium text-emerald-600">Map View</button>
+                    <button className="text-sm font-medium text-emerald-600">{t.dashboard.mapView}</button>
                 </div>
             </div>
 
@@ -101,7 +102,7 @@ const Dashboard: React.FC = () => {
                             </div>
                             <div className="mt-4 pt-3 border-t border-slate-50 flex justify-end">
                                 <Link to={`/track?id=${tree.id}`} className="text-sm font-bold text-emerald-600 hover:underline">
-                                    View Timeline →
+                                    Timeline →
                                 </Link>
                             </div>
                         </div>
@@ -110,9 +111,9 @@ const Dashboard: React.FC = () => {
             </div>
             
             <div className="bg-slate-50 rounded-xl p-8 text-center border border-dashed border-slate-300">
-                <p className="text-slate-500 mb-4">Want to grow your impact?</p>
+                <p className="text-slate-500 mb-4">{t.dashboard.promo}</p>
                 <Link to="/donate" className="inline-block bg-white border border-slate-300 text-slate-700 font-bold py-2 px-6 rounded-full hover:border-emerald-500 hover:text-emerald-600 transition-colors">
-                    Plant More Trees
+                    {t.dashboard.plantMore}
                 </Link>
             </div>
         </div>

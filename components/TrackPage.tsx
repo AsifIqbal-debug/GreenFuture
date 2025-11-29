@@ -1,6 +1,7 @@
 import React, { FormEvent, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Search, MapPin, Calendar, AlertCircle, Sprout, TreeDeciduous } from 'lucide-react';
+import { useLanguage } from "../contexts/LanguageContext";
 
 type TreeStatus = "seed" | "sapling" | "tree" | "lost";
 
@@ -107,17 +108,6 @@ async function mockFetchTree(publicId: string): Promise<TreeData | null> {
   return null;
 }
 
-// Helpers
-function getStatusLabel(status: TreeStatus) {
-  switch (status) {
-    case "seed": return "Seed";
-    case "sapling": return "Sapling";
-    case "tree": return "Grown Tree";
-    case "lost": return "Lost / Damaged";
-    default: return status;
-  }
-}
-
 function getStatusStep(status: TreeStatus): number {
   if (status === "seed") return 0;
   if (status === "sapling") return 1;
@@ -127,6 +117,7 @@ function getStatusStep(status: TreeStatus): number {
 }
 
 const TrackPage: React.FC = () => {
+  const { t } = useLanguage();
   const location = useLocation();
   const [treeIdInput, setTreeIdInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -153,13 +144,13 @@ const TrackPage: React.FC = () => {
     try {
       const data = await mockFetchTree(id);
       if (!data) {
-        setError("No tree found with this ID. Please check and try again.");
+        setError(t.track.notFound);
       } else {
         setTree(data);
       }
     } catch (err) {
       console.error(err);
-      setError("Something went wrong while fetching your tree.");
+      setError(t.track.error);
     } finally {
       setLoading(false);
     }
@@ -178,21 +169,14 @@ const TrackPage: React.FC = () => {
 
   const statusStep = tree ? getStatusStep(tree.status) : 0;
   const isLost = tree?.status === 'lost';
-  
-  // Progress bar calculation (0 to 100%)
-  // Steps: 0 (seed), 1 (sapling), 2 (tree). 
-  // If lost, we might just show full bar in red or similar.
   const progressPercentage = Math.min((statusStep / 2) * 100, 100);
 
   return (
     <main className="max-w-4xl mx-auto mt-8 mb-16 space-y-8 animate-in fade-in duration-500">
       {/* Header */}
       <header className="space-y-2">
-        <h1 className="text-3xl font-bold text-slate-900">Track your tree</h1>
-        <p className="text-slate-600">
-          Enter your Tree ID from the certificate or confirmation email to see its
-          location, status, and growth timeline.
-        </p>
+        <h1 className="text-3xl font-bold text-slate-900">{t.track.title}</h1>
+        <p className="text-slate-600">{t.track.desc}</p>
       </header>
 
       {/* Search box */}
@@ -203,7 +187,7 @@ const TrackPage: React.FC = () => {
         >
           <div className="flex-1 space-y-2">
             <label className="text-sm font-bold text-slate-700">
-              Tree ID
+              {t.track.labelId}
             </label>
             <div className="relative">
                 <input
@@ -221,13 +205,13 @@ const TrackPage: React.FC = () => {
             disabled={loading}
             className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-md hover:bg-emerald-700 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
           >
-            {loading ? "Searching..." : "Track Tree"}
+            {loading ? t.track.searching : t.track.btnSearch}
           </button>
         </form>
         {searchedId && !loading && !tree && !error && (
           <div className="mt-4 p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2 text-slate-600">
             <AlertCircle size={18} />
-            <p className="text-sm">No results found for "{searchedId}". Try another Tree ID.</p>
+            <p className="text-sm">{t.track.notFound} "{searchedId}".</p>
           </div>
         )}
         {error && (
@@ -246,7 +230,7 @@ const TrackPage: React.FC = () => {
             <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-100 space-y-4">
               <div className="flex items-center justify-between gap-2 border-b border-slate-50 pb-4">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tree ID</p>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{t.track.labelId}</p>
                   <p className="text-xl font-bold text-slate-800 tracking-tight">
                     {tree.publicId}
                   </p>
@@ -258,25 +242,25 @@ const TrackPage: React.FC = () => {
                       : "bg-emerald-100 text-emerald-700"
                   }`}
                 >
-                  {getStatusLabel(tree.status)}
+                  {t.track.status[tree.status]}
                 </span>
               </div>
               <div className="grid gap-4 text-sm text-slate-600 sm:grid-cols-2">
                 <div>
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-                    Species
+                    {t.track.species}
                   </p>
                   <p className="font-medium text-slate-800">{tree.species || "Not specified"}</p>
                 </div>
                 <div>
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-                    Planted on
+                    {t.track.plantedOn}
                   </p>
                   <p className="font-medium text-slate-800">{tree.plantedAt ? new Date(tree.plantedAt).toLocaleDateString() : "Unknown"}</p>
                 </div>
                 <div className="sm:col-span-2">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
-                    Plantation site
+                    {t.track.site}
                   </p>
                   <div className="flex items-start gap-2">
                     <MapPin size={16} className="text-emerald-500 mt-0.5 shrink-0" />
@@ -305,7 +289,7 @@ const TrackPage: React.FC = () => {
                     Lat: {tree.site.latitude.toFixed(4)}, Lng: {tree.site.longitude.toFixed(4)}
                  </p>
                  <button className="mt-3 text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-full font-bold hover:bg-emerald-700 transition-colors shadow-sm">
-                    Open in Google Maps
+                    {t.track.openMap}
                  </button>
               </div>
             </div>
@@ -314,8 +298,8 @@ const TrackPage: React.FC = () => {
           {/* Growth timeline bar */}
           <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-100 space-y-6">
             <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-slate-800">Growth Progress</h3>
-                <span className="text-xs font-medium text-slate-500">{Math.round(progressPercentage)}% to Maturity</span>
+                <h3 className="text-sm font-bold text-slate-800">{t.track.progress}</h3>
+                <span className="text-xs font-medium text-slate-500">{Math.round(progressPercentage)}% {t.track.maturity}</span>
             </div>
             
             <div className="relative pt-2 pb-6">
@@ -330,13 +314,12 @@ const TrackPage: React.FC = () => {
                 {/* Steps */}
                 <div className="flex justify-between mt-2 absolute w-full top-3 px-1">
                     {[
-                        { label: 'Seed', icon: Sprout }, 
-                        { label: 'Sapling', icon: Sprout }, 
-                        { label: 'Tree', icon: TreeDeciduous }
+                        { label: t.track.status.seed, icon: Sprout }, 
+                        { label: t.track.status.sapling, icon: Sprout }, 
+                        { label: t.track.status.tree, icon: TreeDeciduous }
                     ].map((step, idx) => {
                         // 0, 1, 2
                         const isActive = statusStep >= idx;
-                        const isCurrent = statusStep === idx;
                         
                         // Positioning
                         const position = idx === 0 ? '0%' : idx === 1 ? '50%' : '100%';
@@ -359,7 +342,7 @@ const TrackPage: React.FC = () => {
             {isLost && (
                  <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex gap-3 text-red-700 text-sm">
                     <AlertCircle className="shrink-0" />
-                    <p>This tree was reported as lost or damaged. Our team has been notified and a replacement sapling is scheduled for the next planting season.</p>
+                    <p>{t.track.lost}</p>
                  </div>
             )}
           </div>
@@ -367,12 +350,11 @@ const TrackPage: React.FC = () => {
           {/* Updates timeline */}
           <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-100">
             <h3 className="mb-6 text-sm font-bold text-slate-800 border-b border-slate-50 pb-2">
-              Field Updates
+              {t.track.updates}
             </h3>
             {tree.updates.length === 0 ? (
               <div className="text-center py-8 text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                <p className="text-sm">No updates yet.</p>
-                <p className="text-xs mt-1">Volunteers upload photos when they visit the site.</p>
+                <p className="text-sm">{t.track.noUpdates}</p>
               </div>
             ) : (
               <div className="relative border-l-2 border-slate-100 ml-3 space-y-8">

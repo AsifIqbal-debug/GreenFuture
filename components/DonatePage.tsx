@@ -2,8 +2,10 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PRICE_PER_TREE, PRESET_AMOUNTS } from '../constants';
 import { Check, CreditCard, Smartphone } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const DonatePage: React.FC = () => {
+  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
@@ -55,17 +57,16 @@ const DonatePage: React.FC = () => {
   return (
     <div className="max-w-3xl mx-auto mt-8 mb-16 space-y-8 animate-in fade-in duration-500">
       <header className="space-y-3">
-        <h1 className="text-3xl font-bold text-slate-900">Plant trees, grow hope</h1>
+        <h1 className="text-3xl font-bold text-slate-900">{t.donate.title}</h1>
         <p className="text-slate-600">
-          Choose how many trees you want to plant. You’ll receive a digital
-          certificate and unique Tree IDs immediately after payment.
+          {t.donate.desc}
         </p>
       </header>
 
       {/* Tree Selector */}
       <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-6">
         <div>
-            <label className="block text-sm font-bold text-slate-800 mb-3">Number of trees</label>
+            <label className="block text-sm font-bold text-slate-800 mb-3">{t.donate.labelTrees}</label>
             <div className="flex flex-wrap gap-3">
             {PRESET_AMOUNTS.map((option) => (
                 <button
@@ -90,21 +91,20 @@ const DonatePage: React.FC = () => {
                     min={1}
                     value={customTrees}
                     onChange={(e) => handleCustomTreesChange(e.target.value)}
-                    placeholder="Custom"
+                    placeholder={t.csr.custom}
                     className={`w-28 rounded-full border px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100 ${customTrees ? 'border-emerald-500 ring-2 ring-emerald-100' : 'border-slate-200'}`}
                 />
-                {customTrees && <span className="absolute right-3 top-2.5 text-xs font-bold text-emerald-600">trees</span>}
             </div>
             </div>
         </div>
 
         <div className="flex items-center justify-between p-4 bg-emerald-50 rounded-xl border border-emerald-100">
           <div className="text-sm text-emerald-800">
-            <span className="font-semibold block">Cost breakdown</span>
-            <span className="opacity-80">{trees} trees × {PRICE_PER_TREE} BDT</span>
+            <span className="font-semibold block">{t.donate.costBreakdown}</span>
+            <span className="opacity-80">{trees} × {PRICE_PER_TREE} BDT</span>
           </div>
           <div className="text-right">
-            <p className="text-xs text-emerald-600 font-medium uppercase tracking-wide">Total Contribution</p>
+            <p className="text-xs text-emerald-600 font-medium uppercase tracking-wide">{t.donate.total}</p>
             <p className="text-2xl font-bold text-emerald-700">
               {amount.toLocaleString()} <span className="text-base font-normal">BDT</span>
             </p>
@@ -114,41 +114,41 @@ const DonatePage: React.FC = () => {
 
       {/* Details */}
       <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-6">
-        <h2 className="text-lg font-bold text-slate-900">Personalize your gift</h2>
+        <h2 className="text-lg font-bold text-slate-900">{t.donate.personalize}</h2>
         
         <div className="grid gap-6 md:grid-cols-2">
             <div>
-                <label className="block text-xs font-semibold uppercase text-slate-500 mb-1.5">Occasion</label>
+                <label className="block text-xs font-semibold uppercase text-slate-500 mb-1.5">{t.donate.occasionLabel}</label>
                 <select
                 value={occasion}
                 onChange={(e) => setOccasion(e.target.value)}
                 className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100"
                 >
-                <option value="none">Just because (General Donation)</option>
-                <option value="birthday">Birthday Celebration</option>
-                <option value="anniversary">Anniversary</option>
-                <option value="memory">In Loving Memory</option>
-                <option value="gift">Gift for a Friend</option>
+                <option value="none">{t.donate.occasions.none}</option>
+                <option value="birthday">{t.donate.occasions.birthday}</option>
+                <option value="anniversary">{t.donate.occasions.anniversary}</option>
+                <option value="memory">{t.donate.occasions.memory}</option>
+                <option value="gift">{t.donate.occasions.gift}</option>
                 </select>
             </div>
             <div>
-                <label className="block text-xs font-semibold uppercase text-slate-500 mb-1.5">Recipient Name</label>
+                <label className="block text-xs font-semibold uppercase text-slate-500 mb-1.5">{t.donate.recipientLabel}</label>
                 <input
                 type="text"
                 value={recipientName}
                 onChange={(e) => setRecipientName(e.target.value)}
-                placeholder="Name on certificate"
+                placeholder=""
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100"
                 />
             </div>
         </div>
         
         <div>
-            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1.5">Message (Optional)</label>
+            <label className="block text-xs font-semibold uppercase text-slate-500 mb-1.5">{t.donate.messageLabel}</label>
             <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Add a personal note to be included with the certificate..."
+                placeholder=""
                 rows={2}
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100 resize-none"
             />
@@ -157,7 +157,7 @@ const DonatePage: React.FC = () => {
 
       {/* Payment */}
       <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-6">
-        <h2 className="text-lg font-bold text-slate-900">Select payment method</h2>
+        <h2 className="text-lg font-bold text-slate-900">{t.donate.paymentTitle}</h2>
         <div className="grid gap-4 md:grid-cols-3">
           <button
             type="button"
@@ -192,7 +192,7 @@ const DonatePage: React.FC = () => {
         </div>
         
         <p className="text-center text-xs text-slate-400 pt-2">
-            Secure payment processing. You will receive an email confirmation immediately.
+            {t.donate.secureNote}
         </p>
       </section>
     </div>
