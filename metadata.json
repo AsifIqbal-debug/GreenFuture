@@ -1,0 +1,5 @@
+{
+  "name": "GreenFuture",
+  "description": "A platform to donate trees, track their growth via GPS, and view environmental impact in real-time.",
+  "requestFramePermissions": []
+}
